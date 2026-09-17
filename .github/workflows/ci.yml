@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Compile Python sources
+        run: python -m compileall -q app.py shazam_client.py tests
+
+      - name: Run unit tests
+        run: python -m unittest discover -s tests -v
+
+      - name: Guard against hardcoded RapidAPI credentials
+        run: |
+          if grep -R "X-RapidAPI-Key.*[A-Za-z0-9].*[A-Za-z0-9]" --include="*.py" . | grep -v '"X-RapidAPI-Key": api_key'; then
+            echo "Possible hardcoded RapidAPI credential found."
+            exit 1
+          fi
