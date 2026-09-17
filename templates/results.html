@@ -1,77 +1,69 @@
 <!doctype html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8">
-    	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0a0a0d" />
+  <title>{{ query or 'Search' }} — Track Search</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+  <main class="shell">
+    <div class="results-header">
+      <div>
+        <p class="eyebrow">Shazam × RapidAPI</p>
+        <h2>{% if query %}Results for “{{ query }}”{% else %}Track search{% endif %}</h2>
+      </div>
+      <a class="back-link" href="{{ url_for('index') }}">← search again</a>
+    </div>
 
-		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    {% if error %}
+      <div class="notice" role="alert">{{ error }}</div>
+    {% elif not tracks %}
+      <div class="results-card empty">
+        Nothing matched that search. Try a shorter title, artist name, or another spelling.
+      </div>
+    {% else %}
+      <section class="track-grid" aria-label="Track results">
+        {% for track in tracks %}
+          <article class="track-card">
+            {% if track.image_url %}
+              <img
+                class="track-art"
+                src="{{ track.image_url }}"
+                alt="Cover art for {{ track.title }}"
+                loading="lazy"
+                referrerpolicy="no-referrer"
+              />
+            {% else %}
+              <div class="track-art-fallback" aria-hidden="true">♪</div>
+            {% endif %}
 
-		<style>
-			#track{
-    			margin: 2.4rem 0;
-			}
-			.track-item{
-				border-radius: 1rem;
-				-webkit-border-radius: 1rem;
-				-moz-border-radius: 1rem;
-				-ms-border-radius: 1rem;
-				-o-border-radius: 1rem;
-				overflow: hidden;
-				box-shadow: 0 4px 21px -12px rgba(0, 0, 0, 0.79);
-				margin: 2rem 0;
-			}
-			.track-img img{
-				width: 100%;
-				display: block;
-			}
-			.track-name{
-				padding: 1.5rem 0.5rem;
-			}
-			.track-name h3{
-				font-size: 1.4rem;
-			}
-			span {
-			  align-self: flex-end;
-			}
-			@media screen and (min-width: 768px){
-				#track{
-					display: grid;
-					grid-template-columns: repeat(2, 1fr);
-					gap: 2rem;
-				}
-				.track-item{
-					margin: 0;
-				}
-			}
-			@media screen and (min-width: 992px){
-				#track{
-					grid-template-columns: repeat(3, 1fr);
-				}
-			}
-		</style>
+            <div class="track-body">
+              <h3 class="track-title">{{ track.title }}</h3>
+              <p class="track-artist">{{ track.artist }}</p>
 
-		<title>Search Songs by Name</title>
-	</head>
-	<body>
+              <div class="track-actions">
+                {% if track.shazam_url %}
+                  <a class="track-link track-link-primary" href="{{ track.shazam_url }}" target="_blank" rel="noopener noreferrer">
+                    Open in Shazam ↗
+                  </a>
+                {% endif %}
+                {% if track.listen_url %}
+                  <a class="track-link" href="{{ track.listen_url }}" target="_blank" rel="noopener noreferrer">
+                    Listen ↗
+                  </a>
+                {% endif %}
+              </div>
+            </div>
+          </article>
+        {% endfor %}
+      </section>
+    {% endif %}
 
-	<div id="track">
-		{% for track in tracks %}
-		<div class="track-item">
-				<div class="track-img">
-				<img src="{{ track['track']['images']['background'] }}" alt="img">
-			</div>
-			<div class="track-name">
-				<h3> {{ track["track"]["share"]["subject"] }} </h3>
-				<span style="display: inline;">
-					<a href="{{ track['track']['hub']['actions'][1]['uri'] }}" class="btn btn-outline-primary">Download</a> <a href="{{ track['track']['url'] }}" class="btn btn-outline-warning">Open</a>
-				</span>
-			</div>
-			</div>
-		{% endfor %}
-	</div>
-
-	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-	</body>
+    <footer class="footer">
+      Results are returned by a third-party API and may vary over time. This app does not download or host audio.
+    </footer>
+  </main>
+</body>
 </html>
