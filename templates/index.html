@@ -1,34 +1,48 @@
+<!doctype html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8">
-    	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-
-		<style>
-			html,body {
-			  height:100%;
-			  width:100%;
-			  margin:0;
-			}
-			body {
-			  display:flex;
-			}
-			form {
-			  margin:auto;
-			}
-		</style>
-
-		<title>Search Songs by Name</title>
-	</head>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0a0a0d" />
+  <meta name="description" content="A tiny Flask side project for searching tracks through the Shazam RapidAPI." />
+  <title>Track Search — Shazam API side quest</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
 <body>
-	<form method="POST" action="/results">
-			Song Name : <input type="text" name="tag">
-			<input type="submit">
-	</form>
+  <main class="shell">
+    <section class="hero">
+      <p class="eyebrow">tiny API side quest</p>
+      <h1>find a track.</h1>
+      <p class="hero-copy">
+        A small Flask experiment from 2022: send a song or artist query to Shazam,
+        normalize the messy response, and keep the useful bits.
+      </p>
+    </section>
 
-	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <section class="search-card" aria-labelledby="search-title">
+      <h2 class="sr-only" id="search-title">Search tracks</h2>
+      <form class="search-form" method="post" action="{{ url_for('results') }}" role="search">
+        <label class="sr-only" for="query">Song, artist, or lyric fragment</label>
+        <input
+          class="search-input"
+          id="query"
+          name="query"
+          type="search"
+          placeholder="Try: Daft Punk"
+          autocomplete="off"
+          maxlength="120"
+          required
+        />
+        <button class="button" type="submit">Search</button>
+      </form>
+      <p class="microcopy">
+        The app talks to Shazam through RapidAPI. A local <code>RAPIDAPI_KEY</code> is required.
+      </p>
+    </section>
+
+    <footer class="footer">
+      No account. No database. No analytics. The query is sent to a third-party API only when you search.
+    </footer>
+  </main>
 </body>
 </html>
